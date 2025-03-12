@@ -12,7 +12,9 @@ class Second extends GetView<SecondController> {
       body: Center(
         child: GetBuilder<SecondController>(
           builder: (controller) {
-            if (controller.newsApi != null) {
+            if (controller.newsApi == null) {
+              return CircularProgressIndicator();
+            } else {
               return ListView.builder(
                 itemCount: controller.newsApi!.articles.length,
                 itemBuilder:
@@ -26,7 +28,8 @@ class Second extends GetView<SecondController> {
                       subtitle: Column(
                         children: [
                           Text(
-                            controller.newsApi!.articles[index].description,
+                            controller.newsApi!.articles[index].description ??
+                                'No description available',
                             style: Theme.of(context).textTheme.bodySmall,
                             maxLines: 3,
                             overflow: TextOverflow.ellipsis,
@@ -48,7 +51,7 @@ class Second extends GetView<SecondController> {
                           alignment: Alignment.center,
                           child: Image(
                             image: NetworkImage(
-                              controller.newsApi!.articles[index].urlToImage,
+                              controller.newsApi!.articles[index].urlToImage!,
                             ),
                           ),
                         ),
@@ -56,8 +59,6 @@ class Second extends GetView<SecondController> {
                       // trailing: Text(''),
                     ),
               );
-            } else {
-              return CircularProgressIndicator();
             }
           },
         ),

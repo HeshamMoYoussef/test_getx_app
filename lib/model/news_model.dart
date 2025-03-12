@@ -1,31 +1,50 @@
+// To parse this JSON data, do
+//
+//     final newsApi = newsApiFromJson(jsonString);
+
+import 'dart:convert';
+
+NewsApi newsApiFromJson(String str) => NewsApi.fromJson(json.decode(str));
+
+String newsApiToJson(NewsApi data) => json.encode(data.toJson());
+
 class NewsApi {
+  final String status;
+  final int totalResults;
+  final List<Article> articles;
+
   NewsApi({
     required this.status,
     required this.totalResults,
     required this.articles,
   });
-  late final String status;
-  late final int totalResults;
-  late final List<Articles> articles;
 
-  NewsApi.fromJson(Map<String, dynamic> json) {
-    status = json['status'];
-    totalResults = json['totalResults'];
-    articles =
-        List.from(json['articles']).map((e) => Articles.fromJson(e)).toList();
-  }
+  factory NewsApi.fromJson(Map<String, dynamic> json) => NewsApi(
+    status: json["status"],
+    totalResults: json["totalResults"],
+    articles: List<Article>.from(
+      json["articles"].map((x) => Article.fromJson(x)),
+    ),
+  );
 
-  Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['status'] = status;
-    _data['totalResults'] = totalResults;
-    _data['articles'] = articles.map((e) => e.toJson()).toList();
-    return _data;
-  }
+  Map<String, dynamic> toJson() => {
+    "status": status,
+    "totalResults": totalResults,
+    "articles": List<dynamic>.from(articles.map((x) => x.toJson())),
+  };
 }
 
-class Articles {
-  Articles({
+class Article {
+  final Source source;
+  final String? author;
+  final String title;
+  final String? description;
+  final String url;
+  final String? urlToImage;
+  final DateTime publishedAt;
+  final String content;
+
+  Article({
     required this.source,
     required this.author,
     required this.title,
@@ -35,54 +54,38 @@ class Articles {
     required this.publishedAt,
     required this.content,
   });
-  late final Source source;
-  late final String author;
-  late final String title;
-  late final String description;
-  late final String url;
-  late final String urlToImage;
-  late final String publishedAt;
-  late final String content;
 
-  Articles.fromJson(Map<String, dynamic> json) {
-    source = Source.fromJson(json['source']);
-    author = json['author'];
-    title = json['title'];
-    description = json['description'] ?? '';
-    url = json['url'];
-    urlToImage = json['urlToImage'];
-    publishedAt = json['publishedAt'];
-    content = json['content'];
-  }
+  factory Article.fromJson(Map<String, dynamic> json) => Article(
+    source: Source.fromJson(json["source"]),
+    author: json["author"],
+    title: json["title"],
+    description: json["description"],
+    url: json["url"],
+    urlToImage: json["urlToImage"],
+    publishedAt: DateTime.parse(json["publishedAt"]),
+    content: json["content"],
+  );
 
-  Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['source'] = source.toJson();
-    _data['author'] = author;
-    _data['title'] = title;
-    _data['description'] = description;
-    _data['url'] = url;
-    _data['urlToImage'] = urlToImage;
-    _data['publishedAt'] = publishedAt;
-    _data['content'] = content;
-    return _data;
-  }
+  Map<String, dynamic> toJson() => {
+    "source": source.toJson(),
+    "author": author,
+    "title": title,
+    "description": description,
+    "url": url,
+    "urlToImage": urlToImage,
+    "publishedAt": publishedAt.toIso8601String(),
+    "content": content,
+  };
 }
 
 class Source {
+  final String? id;
+  final String name;
+
   Source({required this.id, required this.name});
-  late final String id;
-  late final String name;
 
-  Source.fromJson(Map<String, dynamic> json) {
-    id = json['id'] ?? '';
-    name = json['name'];
-  }
+  factory Source.fromJson(Map<String, dynamic> json) =>
+      Source(id: json["id"], name: json["name"]);
 
-  Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['id'] = id;
-    _data['name'] = name;
-    return _data;
-  }
+  Map<String, dynamic> toJson() => {"id": id, "name": name};
 }
